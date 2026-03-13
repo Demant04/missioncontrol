@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Krabbe Mission Board</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="background-orb orb-one"></div>
+    <div class="background-orb orb-two"></div>
+    <div class="noise"></div>
+
+    <main class="app-shell">
+      <section class="hero glass panel-shadow">
+        <div class="hero-copy">
+          <p class="eyebrow">KRABBE FREELANCE CONTROL</p>
+          <h1>Mission board for building a lean, profitable freelance firm.</h1>
+          <p class="hero-text">
+            A command center for leads, proposals, builds, shipping, notes, and the people doing the work.
+            Designed for Demant and Krabbe — with room for the future programmer brain.
+          </p>
+          <div class="hero-badges">
+            <span class="badge success">Autosaves locally</span>
+            <span class="badge">Mission pipeline</span>
+            <span class="badge">Writeable command notes</span>
+            <span class="badge">Screenshot-friendly frontend</span>
+          </div>
+        </div>
+
+        <div class="hero-card glass inset-card">
+          <div class="hero-card-top">
+            <div>
+              <p class="muted-label">North star</p>
+              <strong id="northStarText">Build a freelance machine that finds work, ships fast, and compounds trust.</strong>
+            </div>
+            <span class="status-pill online">Command online</span>
+          </div>
+          <div class="hero-grid">
+            <div>
+              <p class="muted-label">Quarter goal</p>
+              <p id="quarterGoalText">Land the first repeatable frontend + automation offer.</p>
+            </div>
+            <div>
+              <p class="muted-label">Next summit</p>
+              <p id="nextMeetingText">2026-03-14 · 14:00 UTC · Company future meeting</p>
+            </div>
+            <div>
+              <p class="muted-label">Weekly target</p>
+              <p id="weeklyTargetText">5 leads qualified · 2 proposals sent · 1 live proof-of-concept</p>
+            </div>
+            <div>
+              <p class="muted-label">Board mode</p>
+              <p>Dark command deck / glass / agency-ready</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="stats-grid">
+        <article class="metric-card glass panel-shadow">
+          <div>
+            <p class="metric-label">Pipeline value</p>
+            <h2 id="pipelineValue">0 DKK</h2>
+          </div>
+          <p class="metric-footnote">Sum of all open missions that can become paid work.</p>
+        </article>
+        <article class="metric-card glass panel-shadow">
+          <div>
+            <p class="metric-label">Active missions</p>
+            <h2 id="activeMissionCount">0</h2>
+          </div>
+          <p class="metric-footnote">All tasks not yet shipped.</p>
+        </article>
+        <article class="metric-card glass panel-shadow">
+          <div>
+            <p class="metric-label">This-week ship count</p>
+            <h2 id="shipCount">0</h2>
+          </div>
+          <p class="metric-footnote">Missions due in the next 7 days.</p>
+        </article>
+        <article class="metric-card glass panel-shadow">
+          <div>
+            <p class="metric-label">Exam score</p>
+            <h2 id="examScore">0%</h2>
+          </div>
+          <p class="metric-footnote">Frontend readiness checklist for Krabbe's practical exam.</p>
+        </article>
+      </section>
+
+      <section class="content-grid">
+        <div class="main-column">
+          <article class="glass panel-shadow section-block">
+            <div class="section-header">
+              <div>
+                <p class="eyebrow">Mission queue</p>
+                <h3>Sales → build → ship</h3>
+              </div>
+              <div class="toolbar">
+                <button class="ghost-button" id="exportButton">Export JSON</button>
+                <label class="ghost-button import-label">
+                  Import JSON
+                  <input type="file" id="importInput" accept="application/json" hidden />
+                </label>
+                <button class="ghost-button danger" id="resetButton">Reset demo</button>
+              </div>
+            </div>
+
+            <div class="board" id="board"></div>
+          </article>
+
+          <article class="glass panel-shadow section-block">
+            <div class="section-header compact">
+              <div>
+                <p class="eyebrow">Quick capture</p>
+                <h3>Create a mission in seconds</h3>
+              </div>
+            </div>
+
+            <form id="missionForm" class="mission-form">
+              <div class="field-grid two-up">
+                <label>
+                  <span>Mission title</span>
+                  <input type="text" name="title" placeholder="Build landing page for plumbing company" required />
+                </label>
+                <label>
+                  <span>Client / project</span>
+                  <input type="text" name="client" placeholder="Internal / Prospect / Client name" />
+                </label>
+              </div>
+
+              <div class="field-grid four-up">
+                <label>
+                  <span>Value (DKK)</span>
+                  <input type="number" name="value" min="0" step="500" placeholder="12500" />
+                </label>
+                <label>
+                  <span>Lane</span>
+                  <select name="lane">
+                    <option value="capture">Capture</option>
+                    <option value="qualify">Qualify</option>
+                    <option value="proposal">Proposal</option>
+                    <option value="build">Build</option>
+                    <option value="ship">Ship</option>
+                  </select>
+                </label>
+                <label>
+                  <span>Owner</span>
+                  <input type="text" name="owner" placeholder="Krabbe / Programmer" />
+                </label>
+                <label>
+                  <span>Due date</span>
+                  <input type="date" name="dueDate" />
+                </label>
+              </div>
+
+              <div class="field-grid two-up">
+                <label>
+                  <span>Priority</span>
+                  <select name="priority">
+                    <option value="high">High</option>
+                    <option value="medium" selected>Medium</option>
+                    <option value="low">Low</option>
+                  </select>
+                </label>
+                <label>
+                  <span>Progress</span>
+                  <input type="range" name="progress" min="0" max="100" step="5" value="35" />
+                </label>
+              </div>
+
+              <label>
+                <span>Mission notes</span>
+                <textarea name="notes" rows="4" placeholder="What matters? Offer angle, build plan, blockers, expectations…"></textarea>
+              </label>
+
+              <div class="form-actions">
+                <button type="submit" class="primary-button">Add mission</button>
+                <p class="save-state" id="saveState">Board ready. Changes save automatically.</p>
+              </div>
+            </form>
+          </article>
+        </div>
+
+        <aside class="side-column">
+          <article class="glass panel-shadow section-block sticky-card">
+            <div class="section-header compact">
+              <div>
+                <p class="eyebrow">Command notes</p>
+                <h3>Write straight into the board</h3>
+              </div>
+            </div>
+
+            <div class="textarea-stack">
+              <label>
+                <span>Captain's log</span>
+                <textarea id="captainsLog" rows="5" placeholder="What matters this week? Where is the bottleneck?"></textarea>
+              </label>
+              <label>
+                <span>Meeting agenda</span>
+                <textarea id="meetingAgenda" rows="5" placeholder="Agenda for the next Krabbe summit…"></textarea>
+              </label>
+              <label>
+                <span>Offer thesis</span>
+                <textarea id="offerThesis" rows="5" placeholder="What are we selling, to whom, and why will they care?"></textarea>
+              </label>
+            </div>
+          </article>
+
+          <article class="glass panel-shadow section-block">
+            <div class="section-header compact">
+              <div>
+                <p class="eyebrow">Crew</p>
+                <h3>Brains in the firm</h3>
+              </div>
+            </div>
+            <div class="crew-list" id="crewList"></div>
+          </article>
+
+          <article class="glass panel-shadow section-block">
+            <div class="section-header compact">
+              <div>
+                <p class="eyebrow">30-day operation</p>
+                <h3>Suggested rollout</h3>
+              </div>
+            </div>
+            <ol class="timeline-list" id="timelineList"></ol>
+          </article>
+
+          <article class="glass panel-shadow section-block">
+            <div class="section-header compact">
+              <div>
+                <p class="eyebrow">Krabbe exam board</p>
+                <h3>Frontend confidence check</h3>
+              </div>
+            </div>
+            <div class="exam-list" id="examList"></div>
+          </article>
+        </aside>
+      </section>
+    </main>
+
+    <section class="drawer glass panel-shadow hidden" id="editorDrawer" aria-hidden="true">
+      <div class="drawer-header">
+        <div>
+          <p class="eyebrow">Mission editor</p>
+          <h3>Edit active card</h3>
+        </div>
+        <button class="ghost-button" id="closeDrawerButton">Close</button>
+      </div>
+
+      <form id="editorForm" class="mission-form drawer-form">
+        <input type="hidden" name="id" />
+        <div class="field-grid two-up">
+          <label>
+            <span>Title</span>
+            <input type="text" name="title" required />
+          </label>
+          <label>
+            <span>Client</span>
+            <input type="text" name="client" />
+          </label>
+        </div>
+
+        <div class="field-grid four-up">
+          <label>
+            <span>Value</span>
+            <input type="number" name="value" min="0" step="500" />
+          </label>
+          <label>
+            <span>Lane</span>
+            <select name="lane">
+              <option value="capture">Capture</option>
+              <option value="qualify">Qualify</option>
+              <option value="proposal">Proposal</option>
+              <option value="build">Build</option>
+              <option value="ship">Ship</option>
+            </select>
+          </label>
+          <label>
+            <span>Owner</span>
+            <input type="text" name="owner" />
+          </label>
+          <label>
+            <span>Due date</span>
+            <input type="date" name="dueDate" />
+          </label>
+        </div>
+
+        <div class="field-grid two-up">
+          <label>
+            <span>Priority</span>
+            <select name="priority">
+              <option value="high">High</option>
+              <option value="medium">Medium</option>
+              <option value="low">Low</option>
+            </select>
+          </label>
+          <label>
+            <span>Progress</span>
+            <input type="range" name="progress" min="0" max="100" step="5" />
+          </label>
+        </div>
+
+        <label>
+          <span>Notes</span>
+          <textarea name="notes" rows="6"></textarea>
+        </label>
+
+        <div class="form-actions">
+          <button type="submit" class="primary-button">Save mission</button>
+        </div>
+      </form>
+    </section>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
