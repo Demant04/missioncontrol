@@ -1,42 +1,94 @@
-# Krabbe Mission Board
+# Missioncontrol v2
 
-A local command-center style frontend for Krabbe and Demant's freelance firm.
+Missioncontrol is now a chat-first internal workspace for Krabbe, Programmør, and Scout.
 
-## What it does
+It combines:
+- agent channels
+- mission-specific threads
+- task conversion from chat
+- live agent status
+- SQLite persistence on the host PC
+- SSE streaming for message and status updates
 
-- Gives a high-level overview of the business
-- Tracks missions from capture → qualify → proposal → build → ship
-- Lets you write directly into command notes on the board
-- Lets you add, edit, move, and delete mission cards
-- Autosaves state in the browser with `localStorage`
-- Can be screenshot-tested in headless Chromium
+## Stack
 
-## Files
-
-- `index.html` — app shell
-- `styles.css` — visual design
-- `app.js` — state, rendering, autosave, import/export
+- React + Vite frontend
+- Express backend
+- SQLite via `better-sqlite3`
+- OpenAI-backed agent adapter with local fallback when `OPENAI_API_KEY` is not set
 
 ## Run locally
 
-From the workspace root:
+Install dependencies:
 
 ```bash
-python3 -m http.server 8123 -d /home/frederik/.openclaw/workspace/mission-board
+npm install
+```
+
+Start frontend and backend in development:
+
+```bash
+npm run dev
+```
+
+The frontend runs on `http://localhost:5173` and proxies API requests to the backend on `http://localhost:8787`.
+
+## Production-style run
+
+Build the frontend:
+
+```bash
+npm run build
+```
+
+Start the app server:
+
+```bash
+npm start
 ```
 
 Then open:
 
-- `http://127.0.0.1:8123/`
+- `http://127.0.0.1:8787/`
 
-## Headless screenshot test
+## Environment
+
+Copy `.env.example` to `.env` and set:
+
+- `OPENAI_API_KEY` to enable real model-backed agents
+- `OPENAI_MODEL` if you want a different model than the default
+- `PORT` if the backend should listen on a different port
+
+If `OPENAI_API_KEY` is missing, the agent channels still work with a local fallback responder so the product remains usable during setup.
+
+## Tailscale deployment
+
+For private access from your other PCs:
+
+1. Install Tailscale on the always-on host PC and on the client machines.
+2. Run `npm run build` once and `npm start` on the host PC.
+3. Expose the local server port with Tailscale Serve.
+
+Example:
 
 ```bash
-OUT=/home/frederik/snap/chromium/common/krabbe-mission-board.png
-/snap/bin/chromium --headless --no-sandbox --disable-gpu --virtual-time-budget=5000 --screenshot="$OUT" --window-size=1600,2400 'http://127.0.0.1:8123/'
+tailscale serve --bg 8787
 ```
 
-## Notes
+After that, open the Tailscale URL from another machine on the same tailnet.
 
-- The board is intentionally designed for a small freelance operation that wants clarity, pipeline visibility, and room for future agents.
-- Current aesthetic direction: dark command deck + glassmorphism + premium internal tool.
+## Tests
+
+Run the automated suite:
+
+```bash
+npx vitest run
+```
+
+Covered flows include:
+- task state transitions
+- mission creation/linkage
+- sending a message to one agent
+- broadcasting to `Alle`
+- converting a message into a task
+- rendering the React app and opening the task conversion modal
