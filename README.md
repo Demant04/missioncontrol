@@ -1,6 +1,6 @@
 # Missioncontrol v2
 
-Missioncontrol is now a chat-first internal workspace for Krabbe, Programmør, and Scout.
+Missioncontrol is a chat-first internal workspace for Krabbe, Hummer, and Scout.
 
 It combines:
 - agent channels
@@ -8,14 +8,15 @@ It combines:
 - task conversion from chat
 - live agent status
 - SQLite persistence on the host PC
-- SSE streaming for message and status updates
+- SSE updates for messages and status changes
 
 ## Stack
 
 - React + Vite frontend
 - Express backend
 - SQLite via `better-sqlite3`
-- OpenAI-backed agent adapter with local fallback when `OPENAI_API_KEY` is not set
+- OpenClaw CLI integration for real local agents
+- OpenAI adapter or local fallback when OpenClaw is not available
 
 ## Run locally
 
@@ -51,15 +52,44 @@ Then open:
 
 - `http://127.0.0.1:8787/`
 
+## Agent integration modes
+
+Missioncontrol supports three modes:
+
+- `openclaw` — routes agent channels into real OpenClaw agents via the local CLI
+- `openai` — uses the OpenAI Responses API directly
+- `local` — lightweight fallback replies for offline/demo use
+- `auto` — default; prefers OpenClaw when the CLI is installed, then OpenAI, then local fallback
+
+### Recommended mode on the Krabben server
+
+Use OpenClaw mode with the real agent mappings:
+
+```bash
+MISSIONCONTROL_AGENT_MODE=openclaw
+MISSIONCONTROL_KRABBE_AGENT=main
+MISSIONCONTROL_PROGRAMMER_AGENT=hummer
+MISSIONCONTROL_SCOUT_AGENT=scout
+npm start
+```
+
+Each Missioncontrol conversation gets its own stable OpenClaw session id, so the channels keep context across messages.
+
 ## Environment
 
-Copy `.env.example` to `.env` and set:
+Copy `.env.example` to `.env` and set what you need:
 
-- `OPENAI_API_KEY` to enable real model-backed agents
-- `OPENAI_MODEL` if you want a different model than the default
-- `PORT` if the backend should listen on a different port
+- `MISSIONCONTROL_AGENT_MODE`
+- `MISSIONCONTROL_KRABBE_AGENT`
+- `MISSIONCONTROL_PROGRAMMER_AGENT`
+- `MISSIONCONTROL_SCOUT_AGENT`
+- `MISSIONCONTROL_OPENCLAW_THINKING`
+- `MISSIONCONTROL_OPENCLAW_TIMEOUT_MS`
+- `OPENAI_API_KEY`
+- `OPENAI_MODEL`
+- `PORT`
 
-If `OPENAI_API_KEY` is missing, the agent channels still work with a local fallback responder so the product remains usable during setup.
+If the mapped OpenClaw agent does not exist, Missioncontrol falls back locally for that channel instead of crashing.
 
 ## Tailscale deployment
 

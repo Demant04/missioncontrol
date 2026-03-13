@@ -192,6 +192,7 @@ export function createApp(options = {}) {
       let fullBody = '';
       for await (const event of agentService.streamAgent({
         agentId,
+        conversationId,
         userPrompt,
         history,
         missionContext,
